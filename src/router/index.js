@@ -70,6 +70,33 @@ export const constantRoutes = [
         component: () => import("@/views/alluser/index"),
         meta: { title: "所有用户", icon: "table" },
       },
+      {
+        path: "userrecord",
+        name: "userrecord",
+        component: () => import("@/views/userrecord/index"),
+        meta: { title: "用户记录", icon: "table" },
+      },
+    ],
+  },
+  {
+    path: "/order",
+    component: Layout,
+    redirect: "/order/allgift",
+    name: "order",
+    meta: { title: "打赏管理", icon: "el-icon-s-help" },
+    children: [
+      {
+        path: "allgift",
+        name: "allgift",
+        component: () => import("@/views/gift/index"),
+        meta: { title: "所有礼物", icon: "table" },
+      },
+      {
+        path: "allorder",
+        name: "allorder",
+        component: () => import("@/views/order/index"),
+        meta: { title: "所有打赏", icon: "table" },
+      },
     ],
   },
 

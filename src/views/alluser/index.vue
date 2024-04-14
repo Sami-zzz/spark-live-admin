@@ -71,18 +71,23 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="handleEdit(scope.row)"
+              @click="handleResetClick(scope.row.id)"
               style="margin-right: 10px"
               >重置密码</el-button
             >
-            <el-button type="warning" size="mini" style="margin-right: 10px"
+
+            <el-button
+              type="warning"
+              size="mini"
+              style="margin-right: 10px"
+              @click="handleChangeClick(scope.row)"
               >更改状态</el-button
             >
 
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.row)"
+              @click="handleDeleteClick(scope.row.id)"
               >删除</el-button
             >
           </template>
@@ -100,12 +105,55 @@
         >
         </el-pagination>
       </div>
+      <el-dialog
+        title="密码重置"
+        :visible.sync="resetDialogVisible"
+        width="30%"
+      >
+        <span>确定重置密码吗？（默认密码123456）</span>
+        <span slot="footer">
+          <el-button @click="resetDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="resetSubmit">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog
+        title="用户删除"
+        :visible.sync="deleteDialogVisible"
+        width="30%"
+      >
+        <span>确定删除用户吗？</span>
+        <span slot="footer">
+          <el-button @click="deleteDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deleteSubmit">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog
+        title="状态变更"
+        :visible.sync="changeDialogVisible"
+        width="30%"
+      >
+        <el-input
+          type="textarea"
+          v-model="reason"
+          placeholder="请输入原因"
+        ></el-input>
+        <span slot="footer">
+          <el-button @click="changeDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="changeSubmit">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </el-card>
 </template>
 
 <script>
-import { getUserListApi } from "@/api/user";
+import {
+  getUserListApi,
+  resetPasswordApi,
+  deleteUserApi,
+  changeUserApi,
+} from "@/api/user";
+
 export default {
   data() {
     return {
@@ -117,9 +165,23 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
+
+      // 重置密码
+      resetId: 0,
+      resetDialogVisible: false,
+      // 删除用户
+      deleteId: 0,
+      deleteDialogVisible: false,
+      // 变更
+      changeId: 0,
+      username: "",
+      type: 0,
+      reason: "",
+      changeDialogVisible: false,
     };
   },
   methods: {
+    // 表格
     async getUserList() {
       this.tableLoading = true;
       const res = await getUserListApi({
@@ -157,6 +219,85 @@ export default {
       this.pageSize = val;
       this.currentPage = 1;
       this.getUserList();
+    },
+
+    // 重置密码
+    handleResetClick(id) {
+      this.resetId = id;
+      this.resetDialogVisible = true;
+    },
+
+    async resetSubmit() {
+      const res = await resetPasswordApi(this.resetId);
+      if (res.code === 200) {
+        this.$message({
+          message: "重置密码成功",
+          type: "success",
+        });
+      } else {
+        this.$message({
+          message: res.msg,
+          type: "error",
+        });
+      }
+      this.resetDialogVisible = false;
+    },
+
+    // 删除
+    handleDeleteClick(id) {
+      this.deleteId = id;
+      this.deleteDialogVisible = true;
+    },
+
+    async deleteSubmit() {
+      const res = await deleteUserApi(this.deleteId);
+      if (res.code === 200) {
+        this.$message({
+          message: "删除成功",
+          type: "success",
+        });
+        this.getUserList();
+      } else {
+        this.$message({
+          message: res.msg,
+          type: "error",
+        });
+      }
+      this.deleteDialogVisible = false;
+    },
+    // 变更
+    handleChangeClick(row) {
+      this.changeId = row.id;
+      this.username = row.username;
+      if (row.status == 1) {
+        this.type = 0;
+      } else {
+        this.type = 1;
+      }
+      this.changeDialogVisible = true;
+    },
+
+    async changeSubmit() {
+      const res = await changeUserApi({
+        user_id: this.changeId,
+        username: this.username,
+        type: this.type,
+        reason: this.reason,
+      });
+      if (res.code === 200) {
+        this.$message({
+          message: "变更成功",
+          type: "success",
+        });
+        this.reason = "";
+        this.getUserList();
+      } else {
+        this.$message({
+          message: res.msg,
+          type: "error",
+        });
+      }
+      this.changeDialogVisible = false;
     },
   },
   mounted() {

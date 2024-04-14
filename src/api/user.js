@@ -26,3 +26,35 @@ export function getUserListApi(data) {
     data,
   });
 }
+
+//  重置密码
+export function resetPasswordApi(id) {
+  return request({
+    url: `/api/user/reset_pwd_admin/${id}`,
+    method: "get",
+  });
+}
+
+export function deleteUserApi(id) {
+  return request({
+    url: `/api/user/delete_admin/${id}`,
+    method: "get",
+  });
+}
+
+export function changeUserApi(data) {
+  return request({
+    url: "/api/user/change_user_admin",
+    method: "post",
+    data,
+  });
+}
+
+// 获取全部用户记录
+export function getUserRecordListApi(data) {
+  return request({
+    url: "/api/user/getuserrecordlist_admin",
+    method: "post",
+    data,
+  });
+}
