@@ -79,6 +79,27 @@ export const constantRoutes = [
     ],
   },
   {
+    path: "/live",
+    component: Layout,
+    redirect: "/live/liveroom",
+    name: "live",
+    meta: { title: "直播管理", icon: "el-icon-s-help" },
+    children: [
+      {
+        path: "liveroom",
+        name: "liveroom",
+        component: () => import("@/views/liveroom/index"),
+        meta: { title: "正在直播", icon: "table" },
+      },
+      {
+        path: "history",
+        name: "history",
+        component: () => import("@/views/historylive/index"),
+        meta: { title: "历史直播", icon: "table" },
+      },
+    ],
+  },
+  {
     path: "/order",
     component: Layout,
     redirect: "/order/allgift",
