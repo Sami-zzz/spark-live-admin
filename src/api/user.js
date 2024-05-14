@@ -58,3 +58,17 @@ export function getUserRecordListApi(data) {
     data,
   });
 }
+
+export function getCountApi() {
+  return request({
+    url: "/api/user/count",
+    method: "get",
+  });
+}
+
+export function getUserGroupApi() {
+  return request({
+    url: "/api/user/group",
+    method: "get",
+  });
+}

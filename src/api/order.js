@@ -15,3 +15,10 @@ export function getOrderListApi(data) {
     data,
   });
 }
+
+export function getOrderGroupApi() {
+  return request({
+    url: "/api/order/group",
+    method: "get",
+  });
+}
