@@ -118,7 +118,6 @@ export default {
       let userChart = echarts.init(userchartdom);
       let option = {
         title: {
-          text: "用户启用与封禁",
           left: "center",
         },
         tooltip: {
